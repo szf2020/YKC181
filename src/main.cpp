@@ -137,51 +137,51 @@ void processCompleteFrame( SERVER_PACK* frame) {
     // 根据 frame_type 调用相应的处理函数
     switch (frame->frame_type) {
         case 0x02:
-            Serial.printf("Frame Type: %d  登录认证应答（平台->桩）\n", frame->frame_type);
+            Serial.printf("Frame Type: %02X  登录认证应答（平台->桩）\n", frame->frame_type);
             on_cmd_frame_type_0X02(frame);
             loginSuccess = true; 
             break;
         case 0x04:
-            Serial.printf("Frame Type: %d  心跳包应答（平台->桩）\n", frame->frame_type);
+            Serial.printf("Frame Type: %02X  心跳包应答（平台->桩）\n", frame->frame_type);
             on_cmd_frame_type_0X04(frame);
             heartbeatReceived = true; 
             missedHeartbeats = 0;
             break;
         case 0x06:
-            Serial.printf("Frame Type: %d  计费模型验证请求应答（平台->桩）\n", frame->frame_type);
+            Serial.printf("Frame Type: %02X  计费模型验证请求应答（平台->桩）\n", frame->frame_type);
             on_cmd_frame_type_0X06(frame, feeModelNo, localChargingModel);
             // 处理 feeModelNo 和 result
             Serial.printf("Fee Model No: %d\n", feeModelNo);
             Serial.printf("Result: %d\n", localChargingModel);
             break;
         case 0x0A:
-            Serial.printf("Frame Type: %d  计费模型请求应答（平台->桩）\n", frame->frame_type);
+            Serial.printf("Frame Type: %02X  计费模型请求应答（平台->桩）\n", frame->frame_type);
             on_cmd_frame_type_0X0A(frame);
             break;
         case 0xA8:
-            Serial.printf("Frame Type: %d  运营平台远程控制启机（平台->桩）\n", frame->frame_type);
+            Serial.printf("Frame Type: %02X  运营平台远程控制启机（平台->桩）\n", frame->frame_type);
             on_cmd_frame_type_0XA8(frame);
             break;
         case 0x36:
-            Serial.printf("Frame Type: %d  运营平台远程停机（平台->桩）\n", frame->frame_type);
+            Serial.printf("Frame Type: %02X  运营平台远程停机（平台->桩）\n", frame->frame_type);
             Serial.printf("0x36==================\n");
             on_cmd_frame_type_0X36(frame);
             break;
         case 0x56:
-            Serial.printf("Frame Type: %d  对时（平台->桩）\n", frame->frame_type);
+            Serial.printf("Frame Type: %02X  对时（平台->桩）\n", frame->frame_type);
             on_cmd_frame_type_0X56(frame);
             break;
         case 0x40:
             //Serial.printf("0x40==================\n");
-            Serial.printf("Frame Type: %d  交易记录确认（平台->桩）\n", frame->frame_type);
+            Serial.printf("Frame Type: %02X  交易记录确认（平台->桩）\n", frame->frame_type);
             on_cmd_frame_type_0X40(frame);
             break;
         case 0x92:
-            Serial.printf("Frame Type: %d  远程重启（平台->桩）\n", frame->frame_type);
+            Serial.printf("Frame Type: %02X  远程重启（平台->桩）\n", frame->frame_type);
             on_cmd_frame_type_0X92(frame);
             break;
         case 0x58:
-            Serial.printf("Frame Type: %d  计费模型设置（平台->桩）\n", frame->frame_type);
+            Serial.printf("Frame Type: %02X  计费模型设置（平台->桩）\n", frame->frame_type);
             on_cmd_frame_type_0X0A(frame);
             charger_to_server_0X57(1);
             break;
@@ -580,17 +580,17 @@ void simulateChargeTask(void* pvParameters) {
         
         float power = (voltage * current)/1000;
 
-        float energyConsumed = power * 15 / 3600;
-
-        // 更新电量消耗
-        //status->pack_data.charge_energy += energyConsumed;
+        float energyConsumed = power * 15 / 3600;        
 
         // 调用计算费用的函数
         if (getStatus(*status) ==3)
         {
             calculateChargeCostFor15sInterval(energyConsumed,last_time,time(NULL));
+            // 更新电量消耗
+            status->pack_data.charge_energy += energyConsumed;
+
             // 打印电压、电流和消耗电量
-            Serial.printf("Voltage: %dV, Current: %dA, Energy Consumed: %f kWh\n", voltage, current, energyConsumed);
+            Serial.printf("Voltage: %dV, Current: %dA, Energy Consumed: %f kWh  Total Energy Consumed %f kWh\n", voltage, current, energyConsumed,status->pack_data.charge_energy);
         }
         last_time = time(NULL);
 

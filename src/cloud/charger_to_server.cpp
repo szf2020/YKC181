@@ -82,6 +82,7 @@ void charger_to_server_0X01(void)
     data.tele_factory = 0x00;
     //token
     memcpy(data.token, token_serial, 7);
+    Serial.print("Frame Type:0x01 充电桩登录认证(桩->平台)");
     pack_and_send_server_data(FRAME_TYPE_0X01,0,pack_serial,(uint8_t *)&data,sizeof(PACK_DATA_0X01));
     pack_serial++;
 }
@@ -92,6 +93,7 @@ void charger_to_server_0X03(uint8_t gun_index,uint8_t gun_status)
     load_charger_serial(data.charger_serial);
     data.gun_index = gun_index;
     data.gun_status = gun_status;
+    Serial.print("Frame Type:0x03 充电桩心跳包(桩->平台)");
     pack_and_send_server_data(FRAME_TYPE_0X03,0,pack_serial,(uint8_t *)&data,sizeof(PACK_DATA_0X03));
     pack_serial++;
 }
@@ -102,6 +104,7 @@ void charger_to_server_0X05(uint16_t num)
     PACK_DATA_0X05 data = {0};
     load_charger_serial(data.charger_serial);
     data.fee_model_no = num;
+    Serial.print("Frame Type:0x05 计费模型验证请求(桩->平台)");
     pack_and_send_server_data(FRAME_TYPE_0X05,0,pack_serial,(uint8_t *)&data,sizeof(PACK_DATA_0X05));
     pack_serial++;
 }
@@ -111,6 +114,7 @@ void charger_to_server_0X09(void)
 {
     PACK_DATA_0X09 data = {0};
     load_charger_serial(data.charger_serial);
+    Serial.print("Frame Type:0x09 充电桩计费模型请求(桩->平台)");
     pack_and_send_server_data(FRAME_TYPE_0X09,0,pack_serial,(uint8_t *)&data,sizeof(PACK_DATA_0X09));
     pack_serial++;
 }
@@ -199,6 +203,8 @@ void charger_to_server_0X13(uint8_t gun_index)
 
     // Encrypt and send data
     aesEncrypt((char*)&data, sizeof(data), en_data, en_data_len);
+
+    Serial.print("Frame Type:0x13 上传实时监测数据(桩->平台)");
     pack_and_send_server_data(FRAME_TYPE_0X13, 1, pack_serial, en_data, en_data_len);
     pack_serial++;
 }
@@ -211,6 +217,9 @@ void charger_to_server_0X19(uint8_t gun_index)
     load_trade_serial(gun_index,data.trade_serial);
     
     aesEncrypt((char*)&data, sizeof(data), en_data, en_data_len);    
+
+
+    Serial.print("Frame Type:0x19 充电结束(桩->平台)");
     pack_and_send_server_data(FRAME_TYPE_0X19,1,pack_serial,en_data, en_data_len);
 
   //  pack_and_send_server_data(FRAME_TYPE_0X19,0,pack_serial,(uint8_t *)&data,sizeof(PACK_DATA_0X19));
@@ -227,6 +236,9 @@ void charger_to_server_0X31(uint8_t gun_index,uint32_t card_id)
     data.password_flag = 0x0;
     //data.password
     memset((uint8_t *)&data.vin,0x0,sizeof(data.vin));
+
+
+    Serial.print("Frame Type:0x31 (桩->平台)");
     pack_and_send_server_data(FRAME_TYPE_0X31,0,pack_serial,(uint8_t *)&data,sizeof(PACK_DATA_0X31));
     pack_serial++;
 }
@@ -239,6 +251,8 @@ void charger_to_server_0X33(uint8_t gun_index,uint8_t result,uint8_t err_code)
     data.gun_index = gun_index;
     data.result = result;
     data.err_code = err_code;
+
+    Serial.print("Frame Type:0x33 (桩->平台)");
     pack_and_send_server_data(FRAME_TYPE_0X33,0,pack_serial,(uint8_t *)&data,sizeof(PACK_DATA_0X33));
     pack_serial++;
 }
@@ -253,6 +267,8 @@ void charger_to_server_0X35(uint8_t gun_index,uint8_t err_code,uint8_t result)
 
     aesEncrypt((char*)&data, sizeof(data), en_data, en_data_len);
    // pack_and_send_server_data(FRAME_TYPE_0X35,0,pack_serial,(uint8_t *)&data,sizeof(PACK_DATA_0X35));
+
+   Serial.print("Frame Type:0x35 (桩->平台)");
    pack_and_send_server_data(FRAME_TYPE_0X35,1,pack_serial,en_data, en_data_len);
    pack_serial++;
 }
@@ -336,6 +352,8 @@ void charger_to_server_0x3D(uint8_t gun_index,uint32_t card_id,uint8_t trade_fla
 
     aesEncrypt((char*)&data, sizeof(data), en_data, en_data_len);
   //  pack_and_send_server_data(FRAME_TYPE_0X3D,1,pack_serial,(uint8_t *)&data,sizeof(PACK_DATA_0X3D));
+
+    Serial.print("Frame Type:0x3D (桩->平台)");
     pack_and_send_server_data(FRAME_TYPE_0X3D,1,pack_serial,en_data,en_data_len);
     pack_serial++;
 }
@@ -347,6 +365,8 @@ void charger_to_server_0X41(uint32_t card_id,uint8_t result)
     load_charger_serial(data.charger_serial);
     data.result = result;
     memcpy(&data.phy_cardid[4],&card_id,4);
+
+    Serial.print("Frame Type:0x41 余额更新应答(桩->平台)");
     pack_and_send_server_data(FRAME_TYPE_0X41,0,pack_serial,(uint8_t *)&data,sizeof(PACK_DATA_0X41));
     pack_serial++;
 }
@@ -357,6 +377,9 @@ void charger_to_server_0X55(uint32_t time)
     PACK_DATA_0X55 data = {0};
     load_charger_serial(data.charger_serial);
     get_cp56time_from_sec(data.current_time,time);
+
+
+    Serial.print("Frame Type:0x55 对时设置应答(桩->平台)");
     pack_and_send_server_data(FRAME_TYPE_0X55,0,pack_serial,(uint8_t *)&data,sizeof(PACK_DATA_0X55));
     pack_serial++;
 }
@@ -366,6 +389,8 @@ void charger_to_server_0X57(uint8_t result)
     PACK_DATA_0X57 data = {0};
     load_charger_serial(data.charger_serial);
     data.result = result;
+
+    Serial.print("Frame Type:0x57 计费模型应答(桩->平台)");
     pack_and_send_server_data(FRAME_TYPE_0X57,0,pack_serial,(uint8_t *)&data,sizeof(PACK_DATA_0X57));
     pack_serial++;
 }
@@ -382,6 +407,8 @@ void charger_to_server_0XA7(uint8_t gun_index,uint8_t start_result,uint8_t fail_
     //printHex((unsigned char *)&data,sizeof(data));
     
     aesEncrypt((char*)&data, sizeof(data), en_data, en_data_len);
+
+    Serial.print("Frame Type:0xA7 (桩->平台)");
     pack_and_send_server_data(FRAME_TYPE_0XA7,1,pack_serial,en_data,en_data_len);
    // pack_and_send_server_data(FRAME_TYPE_0XA7,0,pack_serial,(uint8_t *)&data,sizeof(PACK_DATA_0XA7));
     pack_serial++;
@@ -393,6 +420,8 @@ void charger_to_server_0X91(uint8_t result)
     PACK_DATA_0X91 data = {0};
     load_charger_serial(data.charger_serial);
     data.result = result;
+
+    Serial.print("Frame Type:0x91 远程重启应答(桩->平台)");
     pack_and_send_server_data(FRAME_TYPE_0X91,0,pack_serial,(uint8_t *)&data,sizeof(PACK_DATA_0X91));
     pack_serial++;
 
