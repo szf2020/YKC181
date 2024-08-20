@@ -255,6 +255,13 @@ void pack_and_send_server_data(uint8_t type,uint8_t encrypt,uint16_t serial,uint
     crc = calc_crc16(&buf[2],len+4);
     buf[index++] = crc & 0xFF;
     buf[index++] = (crc >> 8) & 0xFF;
+
+    for(size_t i=0;i<index;i++)
+    {
+        Serial.print(buf[i],HEX);Serial.print(" ");
+    }
+    Serial.println(" ");
+
     //start_uart_tx(SYS_UART_4G,buf,index);
     sendDataToQueue(buf,index);
     free(buf);

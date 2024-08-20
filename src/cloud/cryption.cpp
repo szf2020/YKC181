@@ -9,6 +9,7 @@
 // 确保公钥格式正确
 const char PUBLIC_KEY[] =
 "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKaTP4eBWYBh3JDnYa7h2nuYACREgmV1o250/36ebYwaUswQDbUdMoeRvRIWxhCtXEzVkMYtH07ctmpzMo8uTvMCAwEAAQ==";
+
 // 固定的随机密钥
 const unsigned char FIXED_RANDOM_KEY[] = "qwertyuiopasdfgh";
 
@@ -176,9 +177,6 @@ String aesEncrypt(const char *message,uint16_t mess_len, unsigned char *output, 
 }
 #endif
 
-
-
-
 String aesDecrypt(const unsigned char *ciphertext, size_t ciphertextLength, unsigned char *hexArray, size_t &hexLength) {
     mbedtls_aes_context aes;
     unsigned char iv[16] = {0};
@@ -213,8 +211,6 @@ String aesDecrypt(const unsigned char *ciphertext, size_t ciphertextLength, unsi
 
     return "";
 }
-
-
 
 
 void base64ToHexArray(const String &base64, unsigned char *hexArray, size_t &hexLength) 

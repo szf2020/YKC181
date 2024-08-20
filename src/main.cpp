@@ -133,45 +133,55 @@ void processCompleteFrame( SERVER_PACK* frame) {
             Serial.println("Data: NULL or Length is 0");
         }
     
-    Serial.printf("Frame Type: %d\n", frame->frame_type);
+    // Serial.printf("Frame Type: %d\n", frame->frame_type);
     // 根据 frame_type 调用相应的处理函数
     switch (frame->frame_type) {
         case 0x02:
+            Serial.printf("Frame Type: %d  登录认证应答（平台->桩）\n", frame->frame_type);
             on_cmd_frame_type_0X02(frame);
             loginSuccess = true; 
             break;
         case 0x04:
+            Serial.printf("Frame Type: %d  心跳包应答（平台->桩）\n", frame->frame_type);
             on_cmd_frame_type_0X04(frame);
             heartbeatReceived = true; 
             missedHeartbeats = 0;
             break;
         case 0x06:
+            Serial.printf("Frame Type: %d  计费模型验证请求应答（平台->桩）\n", frame->frame_type);
             on_cmd_frame_type_0X06(frame, feeModelNo, localChargingModel);
             // 处理 feeModelNo 和 result
             Serial.printf("Fee Model No: %d\n", feeModelNo);
             Serial.printf("Result: %d\n", localChargingModel);
             break;
         case 0x0A:
+            Serial.printf("Frame Type: %d  计费模型请求应答（平台->桩）\n", frame->frame_type);
             on_cmd_frame_type_0X0A(frame);
             break;
         case 0xA8:
+            Serial.printf("Frame Type: %d  运营平台远程控制启机（平台->桩）\n", frame->frame_type);
             on_cmd_frame_type_0XA8(frame);
             break;
         case 0x36:
+            Serial.printf("Frame Type: %d  运营平台远程停机（平台->桩）\n", frame->frame_type);
             Serial.printf("0x36==================\n");
             on_cmd_frame_type_0X36(frame);
             break;
         case 0x56:
+            Serial.printf("Frame Type: %d  对时（平台->桩）\n", frame->frame_type);
             on_cmd_frame_type_0X56(frame);
             break;
         case 0x40:
-            Serial.printf("0x40==================\n");
+            //Serial.printf("0x40==================\n");
+            Serial.printf("Frame Type: %d  交易记录确认（平台->桩）\n", frame->frame_type);
             on_cmd_frame_type_0X40(frame);
             break;
         case 0x92:
+            Serial.printf("Frame Type: %d  远程重启（平台->桩）\n", frame->frame_type);
             on_cmd_frame_type_0X92(frame);
             break;
         case 0x58:
+            Serial.printf("Frame Type: %d  计费模型设置（平台->桩）\n", frame->frame_type);
             on_cmd_frame_type_0X0A(frame);
             charger_to_server_0X57(1);
             break;
@@ -194,6 +204,13 @@ void handleReceivedData(const uint8_t* data, size_t length) {
    // printHex(data,length);
     // 将新数据追加到缓冲区
     memcpy(buffer + bufferLength, data, length);
+
+    for(size_t i=0;i<length;i++)
+    {
+        Serial.print(buffer[i],HEX);Serial.print(" ");
+    }
+    Serial.println(" ");
+
     bufferLength += length;
 
     while (bufferLength >= HEADER_LENGTH) {
@@ -547,7 +564,7 @@ void simulateChargeTask(void* pvParameters) {
 
     while (true) {
         // 随机波动电压在380V附近
-        voltage = 378 + (rand() % 5);
+        voltage = 220 + (rand() % 5);
 
         // 电流逐渐增加，直到接近40A
         if (current < 40) {
@@ -573,7 +590,7 @@ void simulateChargeTask(void* pvParameters) {
         {
             calculateChargeCostFor15sInterval(energyConsumed,last_time,time(NULL));
             // 打印电压、电流和消耗电量
-            // Serial.printf("Voltage: %dV, Current: %dA, Energy Consumed: %f kWh\n", voltage, current, energyConsumed);
+            Serial.printf("Voltage: %dV, Current: %dA, Energy Consumed: %f kWh\n", voltage, current, energyConsumed);
         }
         last_time = time(NULL);
 
@@ -598,6 +615,7 @@ void setup() {
     Serial.begin(115200);
     button_init();
     init_nvs();
+
     stopReasonQueue = xQueueCreate(10, sizeof(StopReason));
     if (!load_fee_model_from_nvs(&(All_status[0].fee_model))) {
         memset(&(All_status[0].fee_model), 0, sizeof(FEE_MODEL));
@@ -607,6 +625,7 @@ void setup() {
     Serial.printf("All_status[0].fee_model:%d\n",All_status[0].fee_model.shark_fee_ratio);
     Serial.printf("All_status[0].fee_model:%d\n",All_status[0].fee_model.flat_fee_ratio);
     Serial.printf("All_status[0].fee_model.fee_model_no:%d\n",All_status[0].fee_model.fee_model_no);
+
     Serial.println("连接到 WiFi 网络...");
     initialize_gun();
     xTaskCreate(stateMachineTask, "State Machine Task", 8192, NULL, 5, NULL);

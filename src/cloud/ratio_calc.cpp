@@ -22,8 +22,7 @@ void initialize_gun_status(Gun_status *status, uint8_t gun_back, uint8_t gun_ins
 }
 
 void initialize_gun()
-{
-    
+{    
     for (int i = 0; i < GUN_NUMS; i++) {
         initialize_gun_status(&All_status[i], IO_GUN_BACK_INIT, IO_GUN_INSERT_INIT, IO_GUN_OUTPUT_INIT);
     }
@@ -133,7 +132,9 @@ float calculateChargeCostFor15sInterval( float power, time_t startTime, time_t e
             case 0x03: All_status[0].duanFee[3] += power; break;  // 谷费率电量
     }
     All_status[0].pack_data.charge_money = totalCost;  
+
     Serial.printf("All_status[0].WillChargeMoney:%d,%f\n",All_status[0].WillChargeMoney,totalCost/100);
+    
     if(totalCost/100 > (All_status[0].WillChargeMoney -20))
     {
         totalCost = 0;
@@ -191,7 +192,7 @@ float calculateChargeCostFor15sInterval( float power, time_t startTime, time_t e
     return data.pack_data.soc;
 }
 
- uint8_t getBatteryTemp(const Gun_status& data) {
+uint8_t getBatteryTemp(const Gun_status& data) {
     return data.pack_data.battery_temp;
 }
 

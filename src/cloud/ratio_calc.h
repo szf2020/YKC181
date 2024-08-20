@@ -6,6 +6,7 @@
 #include <ctime>
 #include <iostream>
 #include "server_common.h"
+
 #define GUN_NUMS 1
 #define NUM_FEE_TYPES 48
 #define IO_GUN_BACK_INIT 16    // 枪是否归位状态的初始值

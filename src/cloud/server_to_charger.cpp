@@ -9,6 +9,8 @@
 #include "bill_manager.h"
 unsigned char raw_data[200]={0};
 size_t aa = 0;
+
+//Serial.printf("Frame Type: %d  登录认证应答（平台->桩）\n", frame->frame_type);
 void on_cmd_frame_type_0X02(SERVER_PACK *pack)
 {
     PACK_DATA_0X02 data;
@@ -20,7 +22,8 @@ void on_cmd_frame_type_0X02(SERVER_PACK *pack)
     }
 }
 
-void on_cmd_frame_type_0X04(SERVER_PACK *pack)
+//Serial.printf("Frame Type: %d  心跳包应答（平台->桩）\n", frame->frame_type);
+void on_cmd_frame_type_0X04(SERVER_PACK *pack)                       //心跳包
 {
     PACK_DATA_0X04 data;
     memcpy(&data,pack->data,sizeof(PACK_DATA_0X04));
@@ -28,7 +31,7 @@ void on_cmd_frame_type_0X04(SERVER_PACK *pack)
     //Serial.print("receive heart beat ack from server!\r\n");
 }
 
-
+//Serial.printf("Frame Type: %d  计费模型验证请求应答（平台->桩）\n", frame->frame_type);
 void on_cmd_frame_type_0X06(SERVER_PACK *pack, int &feeModelNo, int &result) {
     PACK_DATA_0X06 data;
     unsigned char raw_data[200] = {0}; // 确保 raw_data 和 aa 在这里定义
@@ -47,6 +50,7 @@ void on_cmd_frame_type_0X06(SERVER_PACK *pack, int &feeModelNo, int &result) {
 
 
 extern void save_fee_model_to_nvs(const FEE_MODEL* model);
+//Serial.printf("Frame Type: %d  计费模型请求应答（平台->桩）\n", frame->frame_type);
 void on_cmd_frame_type_0X0A(SERVER_PACK *pack)
 {
     
@@ -155,6 +159,7 @@ void on_cmd_frame_type_0X42(SERVER_PACK *pack)
 
 #endif
 
+//Serial.printf("Frame Type: %d  运营平台远程停机（平台->桩）\n", frame->frame_type);
 void on_cmd_frame_type_0X36(SERVER_PACK *pack)
 {
     PACK_DATA_0X36 data; 
@@ -185,6 +190,7 @@ void on_cmd_frame_type_0X36(SERVER_PACK *pack)
    // reset_gun_status(&All_status[data.gun_index-1]);
 }
 
+//Serial.printf("Frame Type: %d  交易记录确认（平台->桩）\n", frame->frame_type);
 void on_cmd_frame_type_0X40(SERVER_PACK *pack)
 {
     PACK_DATA_0X40 data;
@@ -202,6 +208,7 @@ void on_cmd_frame_type_0X40(SERVER_PACK *pack)
     }
 }
 
+//Serial.printf("Frame Type: %d  运营平台远程控制启机（平台->桩）\n", frame->frame_type);
 void on_cmd_frame_type_0XA8(SERVER_PACK *pack)
 {
     PACK_DATA_0XA8 data;
@@ -246,7 +253,7 @@ void on_cmd_frame_type_0XA8(SERVER_PACK *pack)
     charger_to_server_0XA7(data.gun_index,result,err_code);
 }
 
-
+//Serial.printf("Frame Type: %d  对时（平台->桩）\n", frame->frame_type);
 void on_cmd_frame_type_0X56(SERVER_PACK *pack)
 {
     PACK_DATA_0X56 data;
@@ -296,7 +303,7 @@ void on_cmd_frame_type_0X56(SERVER_PACK *pack)
     }
 }
 
-
+//Serial.printf("Frame Type: %d  计费模型设置（平台->桩）\n", frame->frame_type);
 void  on_cmd_frame_type_0X58(SERVER_PACK *pack)
 {
     uint8_t result = 0;
@@ -309,7 +316,7 @@ void  on_cmd_frame_type_0X58(SERVER_PACK *pack)
     charger_to_server_0X57(result);
 }
 
-
+//Serial.printf("Frame Type: %d  远程重启（平台->桩）\n", frame->frame_type);
 void on_cmd_frame_type_0X92(SERVER_PACK *pack) {
     uint8_t result = 0;
     PACK_DATA_0X92 data;

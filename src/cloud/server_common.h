@@ -1,9 +1,12 @@
 #ifndef __SERVER_COMMON_H__
 #define __SERVER_COMMON_H__
 #include <stdint.h>
+
 const uint8_t SERVER_PROTOCOL_VER[3] = {0x01, 0x08, 0x01};
 const uint8_t token_serial[7] = {0x18,0x24,0x08, 0x17, 0x48 ,0x10, 0x06};
+
 #define SW_VERSION  "YKC1.8.1"
+
 #define SERVER_PACK_MAX_LEN                 255
 #define SERVER_PACK_MIN_LEN                 8
 #define SERVER_PACK_START_FLAG              0x68
