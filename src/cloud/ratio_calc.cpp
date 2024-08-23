@@ -120,8 +120,8 @@ float calculateChargeCostFor15sInterval( float power, time_t startTime, time_t e
         index = endFeeIndex;
         
     }
-    periodCost = calculateChargeCostForPeriod(power,  *feeModel, index);
-    totalCost += periodCost;
+   // periodCost = calculateChargeCostForPeriod(power,  *feeModel, index);
+   // totalCost += periodCost;
     All_status[0].feeTimes[index] += difftime(endTime, startTime) / 60.0; 
     All_status[0].feeCosts[index] += periodCost;
     All_status[0].feePower[index] += power;
@@ -131,7 +131,13 @@ float calculateChargeCostFor15sInterval( float power, time_t startTime, time_t e
             case 0x02: All_status[0].duanFee[2] += power; break;  // 平费率电量
             case 0x03: All_status[0].duanFee[3] += power; break;  // 谷费率电量
     }
-    All_status[0].pack_data.charge_money = totalCost;  
+
+    totalCost = 0.0;  // 重新计算 totalCost
+    for (int i = 0; i < 4; i++) {
+        totalCost += All_status[0].duanFee[i] * (getFeeRate(*feeModel, index)/10);
+    }
+
+    All_status[0].pack_data.charge_money = (uint32_t)totalCost;  
 
     Serial.printf("All_status[0].WillChargeMoney:%d,%f\n",All_status[0].WillChargeMoney,totalCost/100);
     

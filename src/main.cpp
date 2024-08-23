@@ -93,8 +93,10 @@ unsigned int missedHeartbeats = 0;
 // const char* password = "u7vw3c2t";
 // const char* ssid = "vivoX100";
 //  const char* password = "zhy123456";
-const char* ssid = "iPhone";
- const char* password = "12345678";
+const char* ssid = "TP-LINK_4E53";
+ const char* password = "15155717168";
+//  const char* ssid = "iPhone";
+//  const char* password = "12345678";
 #define SERVER_IP "114.55.7.88"
 #define SERVER_PORT 8781
 
@@ -364,10 +366,11 @@ void processStopReason() {
     StopReason reason;
     
     if (xQueueReceive(stopReasonQueue, &reason, 0)) {
-        setStatus(All_status[0x00],0x02);
+        
         Serial.printf("stop reason %d\n",reason);
         switch (reason) {
             case STOP_REASON_INSUFFICIENT_BALANCE:
+                setStatus(All_status[0x00],0x02);
                 charger_to_server_0x3D(0x01, 0, 0x01, STOP_REASON_INSUFFICIENT_BALANCE);
                 break;
             case STOP_REASON_EMERGENCY_STOP:
@@ -379,6 +382,7 @@ void processStopReason() {
                 //setHardFault(All_status[0x00],0x00);
                 break;
             case STOP_REASON_APP:
+                setStatus(All_status[0x00],0x02);
                 charger_to_server_0x3D(0x01, 0, 0x01, STOP_REASON_APP);
                 break;
             case STOP_REASON_OTHER:
@@ -387,6 +391,7 @@ void processStopReason() {
             default:
                 break;
         }
+        
         //清空充电记录
         reset_gun_status(&All_status[0x00]);
     }
@@ -567,11 +572,11 @@ void simulateChargeTask(void* pvParameters) {
         voltage = 220 + (rand() % 5);
 
         // 电流逐渐增加，直到接近40A
-        if (current < 40) {
+        if (current < 80) {
             current += rand() % 10;  // 每次增加0到2A
         } else {
             // 当电流达到100A后，在20A附近波动
-            current =39 + (rand() % 3);  
+            current =79 + (rand() % 3);  
         }
 
         // 设置电压和电流
@@ -583,11 +588,11 @@ void simulateChargeTask(void* pvParameters) {
         float energyConsumed = power * 15 / 3600;        
 
         // 调用计算费用的函数
-        if (getStatus(*status) ==3)
+        if        (getStatus(*status) ==3)
         {
             calculateChargeCostFor15sInterval(energyConsumed,last_time,time(NULL));
             // 更新电量消耗
-            status->pack_data.charge_energy += energyConsumed;
+            // status->pack_data.charge_energy += energyConsumed;
 
             // 打印电压、电流和消耗电量
             Serial.printf("Voltage: %dV, Current: %dA, Energy Consumed: %f kWh  Total Energy Consumed %f kWh\n", voltage, current, energyConsumed,status->pack_data.charge_energy);

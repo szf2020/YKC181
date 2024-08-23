@@ -1,7 +1,7 @@
 #include "key.h"
 #include <Arduino.h>
 // 按钮引脚定义
-const int buttonPins[NUM_BUTTONS] = {36};
+const int buttonPins[NUM_BUTTONS] = {35};
 ButtonState buttonStates[NUM_BUTTONS] = {IDLE};
 
 void button_init()

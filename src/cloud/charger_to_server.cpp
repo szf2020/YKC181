@@ -317,7 +317,7 @@ void load_charge_bill(uint8_t gun_index,uint8_t stop_reason,PACK_DATA_0X3D *data
 
     // 计算开始时的能量
     uint32_t start_energy = gun_ctrl->start_charge_energy * 10000;
-    gun_ctrl->pack_data.charge_energy = (data->valley_energy +data->peak_energy +data->flat_energy);
+    gun_ctrl->pack_data.charge_energy = (data->valley_energy +data->peak_energy +data->flat_energy +data->shark_energy);
     // 计算结束时的能量
     uint32_t end_energy = start_energy + (gun_ctrl->pack_data.charge_energy);
 
