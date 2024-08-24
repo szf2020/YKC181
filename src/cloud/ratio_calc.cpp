@@ -395,6 +395,7 @@ void reset_gun_status(Gun_status* gun_status){
     memset(gun_status->feePower, 0, sizeof(gun_status->feePower));
     memset(gun_status->feeCosts, 0, sizeof(gun_status->feeCosts));
     memset(gun_status->feeCosts, 0, sizeof(gun_status->feeTimes));
+    memset(gun_status->feeCosts, 0, sizeof(gun_status->duanFee));
     gun_status->start_time = 0;
     gun_status->start_charge_energy = 0;
 }
