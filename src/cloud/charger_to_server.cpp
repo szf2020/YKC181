@@ -63,6 +63,7 @@ uint32_t get_current_rtc_sec() {
     return now;
 }
 
+//充电桩登录认证
 void charger_to_server_0X01(void)
 {
     size_t hexLength = 0;
@@ -87,6 +88,7 @@ void charger_to_server_0X01(void)
     pack_serial++;
 }
 
+//充电桩心跳包
 void charger_to_server_0X03(uint8_t gun_index,uint8_t gun_status)
 {
     PACK_DATA_0X03 data = {0};
@@ -98,7 +100,7 @@ void charger_to_server_0X03(uint8_t gun_index,uint8_t gun_status)
     pack_serial++;
 }
 
-
+//计费模型验证请求
 void charger_to_server_0X05(uint16_t num)
 {
     PACK_DATA_0X05 data = {0};
@@ -109,7 +111,7 @@ void charger_to_server_0X05(uint16_t num)
     pack_serial++;
 }
 
-
+//充电桩计费模型请求
 void charger_to_server_0X09(void)
 {
     PACK_DATA_0X09 data = {0};
@@ -156,6 +158,8 @@ void charger_to_server_0X13(uint8_t gun_index,uint8_t gun_is_insert)
 }
 #endif
 
+
+//上传实时监测数据
 void charger_to_server_0X13(uint8_t gun_index)
 {
     PACK_DATA_0X13 data = {0};
@@ -209,7 +213,7 @@ void charger_to_server_0X13(uint8_t gun_index)
     pack_serial++;
 }
 
-
+// 充电结束
 void charger_to_server_0X19(uint8_t gun_index)
 {
     PACK_DATA_0X19 data = {0};
@@ -341,7 +345,7 @@ void load_charge_bill(uint8_t gun_index,uint8_t stop_reason,PACK_DATA_0X3D *data
    data->consumption = data->valley_money +data->peak_money + data->flat_money + data->shark_money;
 }
 
-
+//交易记录
 void charger_to_server_0x3D(uint8_t gun_index,uint32_t card_id,uint8_t trade_flag,uint8_t stop_reason)
 {
     PACK_DATA_0X3D data = {0};
@@ -358,7 +362,7 @@ void charger_to_server_0x3D(uint8_t gun_index,uint32_t card_id,uint8_t trade_fla
     pack_serial++;
 }
 
-
+//余额更新应答
 void charger_to_server_0X41(uint32_t card_id,uint8_t result)
 {
     PACK_DATA_0X41 data = {0};
@@ -371,7 +375,7 @@ void charger_to_server_0X41(uint32_t card_id,uint8_t result)
     pack_serial++;
 }
 
-
+//对时设置应答
 void charger_to_server_0X55(uint32_t time)
 {
     PACK_DATA_0X55 data = {0};
@@ -384,6 +388,7 @@ void charger_to_server_0X55(uint32_t time)
     pack_serial++;
 }
 
+//计费模型应答
 void charger_to_server_0X57(uint8_t result)
 {
     PACK_DATA_0X57 data = {0};
@@ -395,6 +400,7 @@ void charger_to_server_0X57(uint8_t result)
     pack_serial++;
 }
 
+//远程启机命令回复
 void charger_to_server_0XA7(uint8_t gun_index,uint8_t start_result,uint8_t fail_reson)
 {
     PACK_DATA_0XA7 data = {0};
@@ -415,6 +421,7 @@ void charger_to_server_0XA7(uint8_t gun_index,uint8_t start_result,uint8_t fail_
 
 }
 
+//远程重启应答
 void charger_to_server_0X91(uint8_t result)
 {
     PACK_DATA_0X91 data = {0};
