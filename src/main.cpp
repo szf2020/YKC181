@@ -588,7 +588,7 @@ void simulateChargeTask(void* pvParameters) {
         float energyConsumed = power * 15 / 3600;        
 
         // 调用计算费用的函数
-        if        (getStatus(*status) ==3)
+        if(getStatus(*status) ==3)
         {
             calculateChargeCostFor15sInterval(energyConsumed,last_time,time(NULL));
             // 更新电量消耗
@@ -630,6 +630,7 @@ void setup() {
     Serial.printf("All_status[0].fee_model:%d\n",All_status[0].fee_model.shark_fee_ratio);
     Serial.printf("All_status[0].fee_model:%d\n",All_status[0].fee_model.flat_fee_ratio);
     Serial.printf("All_status[0].fee_model.fee_model_no:%d\n",All_status[0].fee_model.fee_model_no);
+    Serial.printf("All_status[0].fee_model.loss_ratio:%d\n",All_status[0].fee_model.loss_ratio);
 
     Serial.println("连接到 WiFi 网络...");
     initialize_gun();

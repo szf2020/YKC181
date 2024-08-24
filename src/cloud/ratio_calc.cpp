@@ -33,7 +33,7 @@ Gun_status *get_charge_ctrl(uint8_t gun_index)
     return &(All_status[gun_index]);
 }
 
-
+#if 0
 // 获取当前时间所在的半小时费率索引
 uint8_t getFeeIndexAtTime(time_t timestamp) {
     struct tm* localTime = localtime(&timestamp);
@@ -41,7 +41,22 @@ uint8_t getFeeIndexAtTime(time_t timestamp) {
     int halfHourBlocks = minutesSinceMidnight / 30;
     return halfHourBlocks % 48; // 取模48确保在范围内
 }
+#endif
+uint8_t getFeeIndexAtTime(time_t timestamp) {
+    
+    struct tm* localTime = localtime(&timestamp);
+    Serial.printf("localTime->tm_hour:%d,localTime->tm_min:%d,localTime->tm_sec:%d\n",localTime->tm_hour ,localTime->tm_min,localTime->tm_sec);
+    // 计算从午夜开始的总秒数
+    int secondsSinceMidnight = localTime->tm_hour * 3600 + localTime->tm_min * 60 + localTime->tm_sec;
+    
+    // 每半小时有 1800 秒，计算当前时间点属于哪一个半小时段
+    int halfHourBlocks = secondsSinceMidnight / 1800;
+    
+    // 返回 0 到 47 的索引值
+    return halfHourBlocks;
+}
 
+#if 0
 float getFeeRate(const FEE_MODEL& feeModel, uint8_t feeIndex) {
     
     switch (feeModel.fee_num[feeIndex]) {
@@ -52,7 +67,7 @@ float getFeeRate(const FEE_MODEL& feeModel, uint8_t feeIndex) {
         default: return 0.0;  // 默认费率为0
     }
 }
-#if 0
+
 // 计算充电时间在某个半小时段的费用
 float calculateChargeCostForPeriod(float power, time_t periodStart, time_t periodEnd, uint32_t feeRate) {
     float chargeTimeHours = difftime(periodEnd, periodStart) / 3600.0;
@@ -99,6 +114,18 @@ float calculateCrossTimeChargeCost(const FEE_MODEL& feeModel, float power, time_
 
 #endif
 
+float getFeeRate(const FEE_MODEL& feeModel, uint8_t feeIndex) {
+    
+    switch (feeIndex) {
+        case 0x00: return feeModel.shark_fee_ratio+feeModel.shark_service_ratio ;  // 尖费率
+        case 0x01: return feeModel.peak_fee_ratio+feeModel.peak_service_ratio ;   // 峰费率
+        case 0x02: return feeModel.flat_fee_ratio+feeModel.flat_service_ratio ;    // 平费率
+        case 0x03: return feeModel.valley_fee_ratio+feeModel.valley_service_ratio ;  // 谷费率
+        default: return 0.0;  // 默认费率为0
+    }
+}
+
+
 float calculateChargeCostForPeriod(float power,   FEE_MODEL& feeModel, uint8_t feeIndex) {
    // float chargeTimeHours = difftime(periodEnd, periodStart) / 3600.0;
    // float chargeEnergy = power * chargeTimeHours;
@@ -112,11 +139,12 @@ float calculateChargeCostFor15sInterval( float power, time_t startTime, time_t e
     uint8_t startFeeIndex = getFeeIndexAtTime(startTime);
     uint8_t endFeeIndex = getFeeIndexAtTime(endTime);
     uint8_t index = 0;
-  //  Serial.printf("startFeeIndex=%d,endFeeIndex=%d",startFeeIndex,endFeeIndex);
+    Serial.printf("startFeeIndex=%d,endFeeIndex=%d\n",startFeeIndex,endFeeIndex);
     float periodCost =0;
     if (startFeeIndex == endFeeIndex) {
         index = startFeeIndex;
     } else {
+        
         index = endFeeIndex;
         
     }
@@ -134,7 +162,7 @@ float calculateChargeCostFor15sInterval( float power, time_t startTime, time_t e
 
     totalCost = 0.0;  // 重新计算 totalCost
     for (int i = 0; i < 4; i++) {
-        totalCost += All_status[0].duanFee[i] * (getFeeRate(*feeModel, index)/10);
+        totalCost += All_status[0].duanFee[i] * (getFeeRate(*feeModel, i)/10);
     }
 
     All_status[0].pack_data.charge_money = (uint32_t)totalCost;  
@@ -216,10 +244,15 @@ uint8_t getBatteryTemp(const Gun_status& data) {
 
  uint32_t getChargeEnergy( Gun_status& data) {
     float totalEnery = 0;
-    for (int i = 0; i < NUM_FEE_TYPES; ++i) {
-        totalEnery += data.feePower[i];
-       // Serial.printf("####################data.feePower:%f\n",data.feePower[i]);
+    // for (int i = 0; i < NUM_FEE_TYPES; ++i) {
+    //     totalEnery += data.feePower[i];
+       
+    // }
+    for (int i = 0; i < 4; ++i) {
+        totalEnery += data.duanFee[i];
+       
     }
+    
     data.pack_data.charge_energy= (uint32_t)(totalEnery*10000);
     return data.pack_data.charge_energy;
 }

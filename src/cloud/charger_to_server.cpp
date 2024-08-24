@@ -334,11 +334,11 @@ void load_charge_bill(uint8_t gun_index,uint8_t stop_reason,PACK_DATA_0X3D *data
     data->meter_end_value[4] = 0;
 
    // data->total_energy = gun_ctrl->pack_data.charge_energy;
-    data->total_energy = data->valley_energy + data->peak_energy +data->flat_energy;
+    data->total_energy = data->valley_energy + data->peak_energy +data->flat_energy + data->shark_energy;
     data->stop_reason = stop_reason;
     data->loss_total_energy = data->total_energy;
    // data->consumption = gun_ctrl->pack_data.charge_money*100;
-   data->consumption = data->valley_money +data->peak_money + data->flat_money;
+   data->consumption = data->valley_money +data->peak_money + data->flat_money + data->shark_money;
 }
 
 
