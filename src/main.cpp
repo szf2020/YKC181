@@ -591,9 +591,8 @@ void simulateChargeTask(void* pvParameters) {
         float energyConsumed = power * 15 / 3600;    
 
         // 更新电量消耗
-        mycharge_energy += energyConsumed;   
-
-        Serial.printf("Voltage: %fV, Current: %fA, Power: %f kW,Energy Consumed: %f kWh,Total Energy Consumed %f kWh\n", voltage, current, power,energyConsumed,mycharge_energy); 
+        // mycharge_energy += energyConsumed;  
+        //Serial.printf("Voltage: %fV, Current: %fA, Power: %f kW,Energy Consumed: %f kWh,Total Energy Consumed %f kWh\n", voltage, current, power,energyConsumed,mycharge_energy); 
 
         // 调用计算费用的函数
         if(getStatus(*status) ==3)
@@ -601,10 +600,15 @@ void simulateChargeTask(void* pvParameters) {
             calculateChargeCostFor15sInterval(energyConsumed,last_time,time(NULL));   
 
             // 更新电量消耗
-            // status->pack_data.charge_energy += energyConsumed;
+            // status->pack_data.charge_energy += energyConsumed;    //这个计算有问题，uint32=float+？
+
+            // 更新电量消耗
+            mycharge_energy += energyConsumed;  
 
             // 打印电压、电流和消耗电量
             // Serial.printf("Voltage: %dV, Current: %dA, Energy Consumed: %f kWh  Total Energy Consumed %f kWh\n", voltage, current, energyConsumed,mycharge_energy);
+            Serial.printf("Voltage: %fV, Current: %fA, Power: %f kW,Energy Consumed: %f kWh,Total Energy Consumed %f kWh\n", voltage, current, power,energyConsumed,mycharge_energy); 
+
         }
         last_time = time(NULL);        
 
