@@ -569,7 +569,7 @@ void simulateChargeTask(void* pvParameters) {
     uint16_t voltage = 220;  // 电压从220V开始
     uint16_t current = 5;    // 电流从5A开始
 
-    float mycharge_energy;
+    float mycharge_energy=0;
 
     while (true) {
         // 随机波动电压在380V附近
@@ -601,9 +601,7 @@ void simulateChargeTask(void* pvParameters) {
             // 打印电压、电流和消耗电量
             Serial.printf("Voltage: %dV, Current: %dA, Energy Consumed: %f kWh  Total Energy Consumed %f kWh\n", voltage, current, energyConsumed,mycharge_energy);
         }
-        last_time = time(NULL);
-
-        
+        last_time = time(NULL);        
 
         // 每15秒运行一次
         vTaskDelay(pdMS_TO_TICKS(15000));
