@@ -93,10 +93,11 @@ unsigned int missedHeartbeats = 0;
 // const char* password = "u7vw3c2t";
 // const char* ssid = "vivoX100";
 //  const char* password = "zhy123456";
-const char* ssid = "TP-LINK_4E53";
- const char* password = "15155717168";
-//  const char* ssid = "iPhone";
-//  const char* password = "12345678";
+// const char* ssid = "TP-LINK_4E53";
+//  const char* password = "15155717168";
+
+ const char* ssid = "iPhone";
+ const char* password = "12345678";
 #define SERVER_IP "114.55.7.88"
 #define SERVER_PORT 8781
 

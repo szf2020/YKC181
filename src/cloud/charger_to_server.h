@@ -24,12 +24,12 @@ extern void charger_to_server_0X13(uint8_t gun_index);
 extern void charger_to_server_0X19(uint8_t gun_index);
 
 // 报文被改为A5，A8
-extern void charger_to_server_0X31(uint8_t gun_index,uint32_t card_id);
-extern void charger_to_server_0X33(uint8_t gun_index,uint8_t result,uint8_t err_code);
-
+extern void charger_to_server_0X31(uint8_t gun_index,uint32_t card_id);                   //0x31-0x34改为0xA5-0xA8
+extern void charger_to_server_0X33(uint8_t gun_index,uint8_t result,uint8_t err_code);    //0x31，0x33
 
 extern void charger_to_server_0X35(uint8_t gun_index,uint8_t err_code,uint8_t result);
-extern void charger_to_server_0x3B(uint8_t gun_index,uint32_t card_id,uint8_t trade_flag,uint8_t stop_reason);
+
+extern void charger_to_server_0x3B(uint8_t gun_index,uint32_t card_id,uint8_t trade_flag,uint8_t stop_reason);   //3B改为3D
 
 //余额更新应答
 extern void charger_to_server_0X41(uint32_t card_id,uint8_t result);

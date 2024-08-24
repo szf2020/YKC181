@@ -9,8 +9,10 @@ extern void on_cmd_frame_type_0X02(SERVER_PACK *pack);
 extern void on_cmd_frame_type_0X04(SERVER_PACK *pack);
 extern void on_cmd_frame_type_0X06(SERVER_PACK *pack, int &feeModelNo, int &result);
 extern void on_cmd_frame_type_0X0A(SERVER_PACK *pack);
-extern void on_cmd_frame_type_0X32(SERVER_PACK *pack);
-extern void on_cmd_frame_type_0X34(SERVER_PACK *pack);
+
+extern void on_cmd_frame_type_0X32(SERVER_PACK *pack);     //0x31-0x34改为0xA5-0xA8
+extern void on_cmd_frame_type_0X34(SERVER_PACK *pack);     //0x32，0x34
+
 extern void on_cmd_frame_type_0X36(SERVER_PACK *pack);
 extern void on_cmd_frame_type_0X40(SERVER_PACK *pack);
 extern void on_cmd_frame_type_0X42(SERVER_PACK *pack);

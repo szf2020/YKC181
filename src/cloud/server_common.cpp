@@ -3,7 +3,11 @@
 #include <Arduino.h>
 #include <time.h>
 extern QueueHandle_t dataQueue;
+
 uint8_t charger_serial[CHARGER_SERIAL_LENGTH] = {0x32,0x01,0x06,0x00,0x00,0x01,0x88};
+//uint8_t charger_serial[CHARGER_SERIAL_LENGTH] = {0x32,0x01,0x06,0x00,0x00,0x06,0x17};
+
+
 uint8_t trade_serial[2][TRADE_SERIAL_LENGTH] = {0};
 static FEE_MODEL current_setting_fee_model = {0};
 uint32_t heart_beat_cnt = 0;

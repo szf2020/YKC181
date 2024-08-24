@@ -12,9 +12,10 @@
 #define IO_GUN_BACK_INIT 16    // 枪是否归位状态的初始值
 #define IO_GUN_INSERT_INIT 17  // 枪是否插入状态的初始值
 #define IO_GUN_OUTPUT_INIT 18  // 枪输出状态的初始值
+
 //300000
 #define DELAY_15S      15000   
-#define DELAY_5MIN     20000  
+#define DELAY_5MIN     300000  //300秒
 
 
 
