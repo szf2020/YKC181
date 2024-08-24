@@ -368,7 +368,8 @@ void processStopReason() {
     
     if (xQueueReceive(stopReasonQueue, &reason, 0)) {
         
-        Serial.printf("stop reason %d\n",reason);
+        Serial.printf("stop reason %02x\n",reason);
+        
         switch (reason) {
             case STOP_REASON_INSUFFICIENT_BALANCE:
                 setStatus(All_status[0x00],0x02);
