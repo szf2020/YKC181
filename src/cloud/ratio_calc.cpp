@@ -160,14 +160,14 @@ float calculateChargeCostFor15sInterval( float power, time_t startTime, time_t e
             case 0x03: All_status[0].duanFee[3] += power; break;  // 谷费率电量
     }
 
-    totalCost = 0.0;  // 重新计算 totalCost
+    totalCost = 0.0;                                              // 重新计算 totalCost
     for (int i = 0; i < 4; i++) {
         totalCost += All_status[0].duanFee[i] * (getFeeRate(*feeModel, i)/10);
     }
 
     All_status[0].pack_data.charge_money = (uint32_t)totalCost;  
 
-    Serial.printf("All_status[0].WillChargeMoney:%d,%f\n",All_status[0].WillChargeMoney,totalCost/100);
+    Serial.printf("All_status[0].WillChargeMoney:%d,TotalCost: %f\n",All_status[0].WillChargeMoney,totalCost/100);
     
     if(totalCost/100 > (All_status[0].WillChargeMoney -20))
     {
