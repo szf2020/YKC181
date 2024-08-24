@@ -11,7 +11,7 @@
 #define NUM_FEE_TYPES 48
 
 #define IO_GUN_BACK_INIT 16    // 枪是否归位状态的初始值
-#define IO_GUN_INSERT_INIT 17  // 枪是否插入状态的初始值，由于是上拉，所以当接入为0时候表示未插枪
+#define IO_GUN_INSERT_INIT 17  // 枪是否插入状态的初始值，由于是上拉，所以当接入为0时候表示未插枪，上拉不接或接入3.3V表示插枪
 #define IO_GUN_OUTPUT_INIT 18  // 枪输出状态的初始值
 
 //300000
