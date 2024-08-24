@@ -566,8 +566,8 @@ void stateMachineTask(void *pvParameters) {
 void simulateChargeTask(void* pvParameters) {
     Gun_status* status = (Gun_status*) pvParameters;
     uint32_t last_time =0;
-    uint16_t voltage = 220;  // 电压从220V开始
-    uint16_t current = 5;    // 电流从5A开始
+    float voltage = 220;  // 电压从220V开始
+    float current = 5;    // 电流从5A开始
 
     float mycharge_energy=0;
 
@@ -587,19 +587,24 @@ void simulateChargeTask(void* pvParameters) {
         setOutVoltage(*status, voltage);
         setOutCurrent(*status, current);
         
-        float power = (voltage * current)/1000;
+        float power = ((float)(voltage * current))/1000;      //修改计算
         float energyConsumed = power * 15 / 3600;    
 
         // 更新电量消耗
-        mycharge_energy += energyConsumed;    
+        mycharge_energy += energyConsumed;   
+
+        Serial.printf("Voltage: %fV, Current: %fA, Power: %f kW,Energy Consumed: %f kWh,Total Energy Consumed %f kWh\n", voltage, current, power,energyConsumed,mycharge_energy); 
 
         // 调用计算费用的函数
         if(getStatus(*status) ==3)
         {
-            calculateChargeCostFor15sInterval(energyConsumed,last_time,time(NULL));            
+            calculateChargeCostFor15sInterval(energyConsumed,last_time,time(NULL));   
+
+            // 更新电量消耗
+            // status->pack_data.charge_energy += energyConsumed;
 
             // 打印电压、电流和消耗电量
-            Serial.printf("Voltage: %dV, Current: %dA, Energy Consumed: %f kWh  Total Energy Consumed %f kWh\n", voltage, current, energyConsumed,mycharge_energy);
+            // Serial.printf("Voltage: %dV, Current: %dA, Energy Consumed: %f kWh  Total Energy Consumed %f kWh\n", voltage, current, energyConsumed,mycharge_energy);
         }
         last_time = time(NULL);        
 
