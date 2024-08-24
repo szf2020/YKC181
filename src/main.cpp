@@ -369,7 +369,7 @@ void processStopReason() {
     if (xQueueReceive(stopReasonQueue, &reason, 0)) {
         
         Serial.printf("stop reason %02x\n",reason);
-        
+
         switch (reason) {
             case STOP_REASON_INSUFFICIENT_BALANCE:
                 setStatus(All_status[0x00],0x02);
@@ -569,6 +569,8 @@ void simulateChargeTask(void* pvParameters) {
     uint16_t voltage = 220;  // 电压从220V开始
     uint16_t current = 5;    // 电流从5A开始
 
+    float mycharge_energy;
+
     while (true) {
         // 随机波动电压在380V附近
         voltage = 220 + (rand() % 5);
@@ -586,18 +588,18 @@ void simulateChargeTask(void* pvParameters) {
         setOutCurrent(*status, current);
         
         float power = (voltage * current)/1000;
+        float energyConsumed = power * 15 / 3600;    
 
-        float energyConsumed = power * 15 / 3600;        
+        // 更新电量消耗
+        mycharge_energy += energyConsumed;    
 
         // 调用计算费用的函数
         if(getStatus(*status) ==3)
         {
-            calculateChargeCostFor15sInterval(energyConsumed,last_time,time(NULL));
-            // 更新电量消耗
-            // status->pack_data.charge_energy += energyConsumed;
+            calculateChargeCostFor15sInterval(energyConsumed,last_time,time(NULL));            
 
             // 打印电压、电流和消耗电量
-            Serial.printf("Voltage: %dV, Current: %dA, Energy Consumed: %f kWh  Total Energy Consumed %f kWh\n", voltage, current, energyConsumed,status->pack_data.charge_energy);
+            Serial.printf("Voltage: %dV, Current: %dA, Energy Consumed: %f kWh  Total Energy Consumed %f kWh\n", voltage, current, energyConsumed,mycharge_energy);
         }
         last_time = time(NULL);
 
