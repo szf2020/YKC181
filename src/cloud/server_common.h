@@ -4,8 +4,8 @@
 
 const uint8_t SERVER_PROTOCOL_VER[3] = {0x01, 0x08, 0x01};
 
-const uint8_t token_serial[7] = {0x88,0x24,0x04, 0x12, 0x50 ,0x10, 0x06};
-//const uint8_t token_serial[7] = {0x56,0x24,0x08, 0x24, 0x18 ,0x10, 0x01};
+//const uint8_t token_serial[7] = {0x88,0x24,0x04, 0x12, 0x50 ,0x10, 0x06};
+const uint8_t token_serial[7] = {0x56,0x24,0x08, 0x24, 0x18 ,0x10, 0x01};
 
 #define SW_VERSION  "YKC1.8.1"
 
@@ -13,13 +13,13 @@ const uint8_t token_serial[7] = {0x88,0x24,0x04, 0x12, 0x50 ,0x10, 0x06};
 #define SERVER_PACK_MIN_LEN                 8
 #define SERVER_PACK_START_FLAG              0x68
 
-#define CHARGER_SERIAL_LENGTH  7
-#define TRADE_SERIAL_LENGTH    16
+#define CHARGER_SERIAL_LENGTH               7
+#define TRADE_SERIAL_LENGTH                 16
 
-#define RSA_LENGTH    88
+#define RSA_LENGTH                          88
 
-#define CHARGER_TYPE_DC  0
-#define CHARGER_TYPE_AC  1
+#define CHARGER_TYPE_DC                     0
+#define CHARGER_TYPE_AC                     1
 
 #define FRAME_TYPE_0X01        0x01//充电桩登录认证
 #define FRAME_TYPE_0X02        0x02
@@ -42,13 +42,15 @@ const uint8_t token_serial[7] = {0x88,0x24,0x04, 0x12, 0x50 ,0x10, 0x06};
 #define FRAME_TYPE_0X23        0x23//充电过程BMS需求、充电机输出
 #define FRAME_TYPE_0X25        0x25//充电过程BMS信息
 
-
+//---------------------------------------
 #define FRAME_TYPE_0X31         0x31//充电桩主动申请启动充电
 #define FRAME_TYPE_0X32         0x32//运营平台确认启动充电
 #define FRAME_TYPE_0X33         0x33//远程启动命令回复
 #define FRAME_TYPE_0X34         0x34//运营平台远程控制启动
+
 #define FRAME_TYPE_0X35         0x35//远程停机命令回复
 #define FRAME_TYPE_0X36         0x36//运营平台远程停机
+//---------------------------------------
 
 #define FRAME_TYPE_0X3D         0x3D//交易记录
 #define FRAME_TYPE_0X40         0x40//交易记录确认
@@ -90,24 +92,24 @@ const uint8_t token_serial[7] = {0x88,0x24,0x04, 0x12, 0x50 ,0x10, 0x06};
 #define FRAME_TYPE_MAX          0xFF
 
 
-#define CAHRGE_START_MODE_APP             0x01
-#define CAHRGE_START_MODE_CARD            0x02
-#define CAHRGE_START_MODE_OFFLINE_CARD    0x04
-#define CAHRGE_START_MODE_VIN             0x05
+#define CAHRGE_START_MODE_APP               0x01
+#define CAHRGE_START_MODE_CARD              0x02
+#define CAHRGE_START_MODE_OFFLINE_CARD      0x04
+#define CAHRGE_START_MODE_VIN               0x05
 
-#define CAHRGE_START_MODE_IC_CARD         0xA0
-#define CAHRGE_START_MODE_PASSWORD        0xA1
+#define CAHRGE_START_MODE_IC_CARD           0xA0
+#define CAHRGE_START_MODE_PASSWORD          0xA1
 
-#define STOP_CHARGE_AS_APP          0x40
-#define STOP_CHARGE_AS_FULL         0x41
-#define STOP_CHARGE_AS_ENERGY_REACH 0x42
-#define STOP_CHARGE_AS_MONEY_REACH  0x43
-#define STOP_CHARGE_AS_TIME_REACH   0x44
-#define STOP_CHARGE_AS_MANUAL       0x45
-#define STOP_CHARGE_AS_NO_MONEY     0x6E
+#define STOP_CHARGE_AS_APP                  0x40
+#define STOP_CHARGE_AS_FULL                 0x41
+#define STOP_CHARGE_AS_ENERGY_REACH         0x42
+#define STOP_CHARGE_AS_MONEY_REACH          0x43
+#define STOP_CHARGE_AS_TIME_REACH           0x44
+#define STOP_CHARGE_AS_MANUAL               0x45
+#define STOP_CHARGE_AS_NO_MONEY             0x6E
 
-#define STOP_CHARGE_AS_EMERGY_STOP  0x72
-#define STOP_CHARGE_AS_POWEROFF     0x83
+#define STOP_CHARGE_AS_EMERGY_STOP          0x72
+#define STOP_CHARGE_AS_POWEROFF             0x83
 
 typedef enum {
     STOP_REASON_APP =0x40,
@@ -128,11 +130,11 @@ typedef struct{
 }SERVER_PACK;
 
 typedef struct {
-    float voltage;        // 电压 (单位: V)
-    float charge_energy;  // 充电能量 (单位: kWh)
-    float current;        // 电流 (单位: A)
-    unsigned long charge_time; // 充电时间 (单位: 秒)
-    float charge_money;   // 充电费用 (单位: 元)
+    float voltage;                  // 电压 (单位: V)
+    float charge_energy;            // 充电能量 (单位: kWh)
+    float current;                  // 电流 (单位: A)
+    unsigned long charge_time;      // 充电时间 (单位: 秒)
+    float charge_money;             // 充电费用 (单位: 元)
 } CHARGING_GUN_CTRL;
 
 typedef struct{
@@ -202,24 +204,24 @@ typedef struct{
 }__attribute__ ((packed)) PACK_DATA_0X0A;//0x0A
 
 typedef struct{
-    uint8_t trade_serial[TRADE_SERIAL_LENGTH];//交易流水号
-    uint8_t charger_serial[CHARGER_SERIAL_LENGTH];//桩编号
-    uint8_t gun_index;//枪编号
-    uint8_t status;//状态
-    uint8_t gun_back;//枪是否归位
-    uint8_t gun_is_insert;//是否插枪
-    uint16_t out_voltage;//输出电压,小数点后一位,待机置0
-    uint16_t out_current;//输出电流,小数点后一位,待机置0
-    uint8_t gun_line_temp;//枪线温度
-    uint8_t gun_line_num[8];//枪线编码
-    uint8_t soc;//待机置零；交流桩置零
-    uint8_t battery_temp;//电池组最高温度.整形，偏移量-50 ºC；待机置零；交流桩置零
-    uint16_t charge_time;//累计充电时间
-    uint16_t remain_time;//剩余时间
-    uint32_t charge_energy;//充电度数
-    uint32_t loss_energy;//计损充电度数
-    uint32_t charge_money;//已充金额
-    uint16_t hard_fault;//硬件故障
+    uint8_t trade_serial[TRADE_SERIAL_LENGTH];      //交易流水号
+    uint8_t charger_serial[CHARGER_SERIAL_LENGTH];  //桩编号
+    uint8_t gun_index;                              //枪编号
+    uint8_t status;                                 //状态
+    uint8_t gun_back;                               //枪是否归位
+    uint8_t gun_is_insert;                          //是否插枪
+    uint16_t out_voltage;                           //输出电压,小数点后一位,待机置0
+    uint16_t out_current;                           //输出电流,小数点后一位,待机置0
+    uint8_t gun_line_temp;                          //枪线温度
+    uint8_t gun_line_num[8];                        //枪线编码
+    uint8_t soc;                                    //待机置零；交流桩置零
+    uint8_t battery_temp;                           //电池组最高温度.整形，偏移量-50 ºC；待机置零；交流桩置零
+    uint16_t charge_time;                           //累计充电时间
+    uint16_t remain_time;                           //剩余时间
+    uint32_t charge_energy;                         //充电度数
+    uint32_t loss_energy;                           //计损充电度数
+    uint32_t charge_money;                          //已充金额
+    uint16_t hard_fault;                            //硬件故障
 }__attribute__ ((packed)) PACK_DATA_0X13;//0x13
 
 typedef struct{
