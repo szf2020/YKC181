@@ -362,18 +362,28 @@ void charger_to_server_0x3D(uint8_t gun_index,uint32_t card_id,uint8_t trade_fla
     pack_serial++;
 }
 
+uint8_t men_data[255] ={0};
+size_t men_data_len = 0;
+
 //余额更新应答
-void charger_to_server_0X41(uint32_t card_id,uint8_t result)
-{
+void charger_to_server_0X41(uint8_t * card_id, uint8_t reason) {
+    
     PACK_DATA_0X41 data = {0};
     load_charger_serial(data.charger_serial);
-    data.result = result;
-    memcpy(&data.phy_cardid[4],&card_id,4);
+    data.result = reason;
 
+    memcpy(data.phy_cardid, card_id, 8);
+   
+    aesEncrypt((char*)&data, sizeof(data), men_data, men_data_len);
+   // printHex(en_data,en_data_len);
+   // Serial.printf("Encrypted data length: %d\n", en_data_len);
     Serial.print("Frame Type:0x41 余额更新应答(桩->平台)");
-    pack_and_send_server_data(FRAME_TYPE_0X41,0,pack_serial,(uint8_t *)&data,sizeof(PACK_DATA_0X41));
+    pack_and_send_server_data(FRAME_TYPE_0X41, 1, pack_serial, men_data, men_data_len);
+   // pack_and_send_server_data(FRAME_TYPE_0X41,0,pack_serial,(uint8_t *)&data,sizeof(FRAME_TYPE_0X41));
     pack_serial++;
 }
+
+
 
 //对时设置应答
 void charger_to_server_0X55(uint32_t time)

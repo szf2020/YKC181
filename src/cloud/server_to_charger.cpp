@@ -133,31 +133,39 @@ void on_cmd_frame_type_0X34(SERVER_PACK *pack)
 }
 
 
+#endif
 
 
-void on_cmd_frame_type_0X42(SERVER_PACK *pack)
-{
+
+void on_cmd_frame_type_0X42(SERVER_PACK *pack) {
     PACK_DATA_0X42 data;
-
-    uint32_t rcv_card_id = 0;
+    uint8_t rcv_card_id[8] = {0};  // 使用数组来存储卡号
     uint8_t reset = 0;
     CHARGING_GUN_CTRL *gun_ctrl = NULL;
-    memcpy(&data,pack->data,sizeof(PACK_DATA_0X42));
-    memcpy(&rcv_card_id,&data.phy_cardid[4],0x04);
-    if(is_my_charger_serial(data.charger_serial)){
-        gun_ctrl = get_charge_ctrl(data.gun_index-1);
-        if((rcv_card_id == gun_ctrl->card_id) || (rcv_card_id == 0)){
-            update_remain_money_to_gun(data.gun_index-1,data.remain_money);
-        }else{
-            reset = 0x01;
-        }
-    }else{
+
+    if (pack->encrypt_flag == 1) {
+        aesDecrypt(pack->data, pack->len - 4, raw_data, aa);
+        memcpy(&data, raw_data, aa);
+        Serial.println("encrypt_flag============1");
+    } else {
+        memcpy(&data, pack->data, sizeof(PACK_DATA_0X42));
+    }
+
+    // 将 phy_cardid 的 8 字节复制到 rcv_card_id 数组
+    memcpy(rcv_card_id, data.phy_cardid, sizeof(rcv_card_id));
+    
+    if (is_my_charger_serial(data.charger_serial)) {
+        setWillChargeMoney(All_status[data.gun_index - 1], data.remain_money);
+    } else {
         reset = 0x02;
     }
-    charger_to_server_0X41(rcv_card_id,reset);
+    Serial.printf("=====setWillChargeMoney:%d,%d\n",All_status[data.gun_index-1].WillChargeMoney,data.gun_index);
+   // Serial.printf("Card ID: %s\n", rcv_card_id);
+   printHex(rcv_card_id,8);
+   charger_to_server_0X41(rcv_card_id,reset);
 }
 
-#endif
+
 
 //Serial.printf("Frame Type: %d  运营平台远程停机（平台->桩）\n", frame->frame_type);
 void on_cmd_frame_type_0X36(SERVER_PACK *pack)
@@ -178,7 +186,7 @@ void on_cmd_frame_type_0X36(SERVER_PACK *pack)
         result = 0;
         err_code = 0x3;
      }
-    setStatus(All_status[data.gun_index-1],2);
+   // setStatus(All_status[data.gun_index-1],2);
     
     printf("err_code:%d,result:%d,gun_index:%d \n",err_code,result,data.gun_index);
     charger_to_server_0X35(data.gun_index,err_code,result);

@@ -188,6 +188,10 @@ void processCompleteFrame( SERVER_PACK* frame) {
             on_cmd_frame_type_0X0A(frame);
             charger_to_server_0X57(1);
             break;
+        case 0x42:
+            Serial.printf("Frame Type: %02X  更新余额（平台->桩）\n", frame->frame_type);
+            on_cmd_frame_type_0X42(frame);
+            break;
         default:
             Serial.println("Unknown frame type.");
             break;
@@ -358,6 +362,9 @@ int checkGPIOStateChange(uint8_t pin) {
 
 void sendFailureReasonToQueue(StopReason reason) {
     // 发送失败原因到队列
+
+  //  setStatus(All_status[0x00],0x02);
+
     if (xQueueSend(stopReasonQueue, &reason, portMAX_DELAY) != pdPASS) {
         Serial.println("Failed to send reason to queue.");
     }
@@ -517,7 +524,7 @@ void stateMachineTask(void *pvParameters) {
         {
             resend_bill_proc();
             //账单数据
-            processStopReason();
+            
         }
 
         int insert_status = checkGPIOStateChange(IO_GUN_INSERT_INIT);
@@ -549,6 +556,7 @@ void stateMachineTask(void *pvParameters) {
         }
 
         if (initialSendDone && loginSuccess && millis() - lastChargingEndSendMillis > All_status[0].interval_time) { 
+            processStopReason();
             charger_to_server_0X13(1); 
            // Serial.printf("All_status[0].interval_time:%d\n",All_status[0].interval_time);
             lastChargingEndSendMillis = millis();
@@ -560,7 +568,6 @@ void stateMachineTask(void *pvParameters) {
             initialSendDone = true;  // 标记初始发送已经完成
             lastChargingEndSendMillis = millis();  // 更新最后发送时间
         }
-        
         
         vTaskDelay(pdMS_TO_TICKS(100)); 
     }

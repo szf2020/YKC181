@@ -4,8 +4,8 @@
 
 const uint8_t SERVER_PROTOCOL_VER[3] = {0x01, 0x08, 0x01};
 
-//const uint8_t token_serial[7] = {0x88,0x24,0x04, 0x12, 0x50 ,0x10, 0x06};
-const uint8_t token_serial[7] = {0x56,0x24,0x08, 0x24, 0x18 ,0x10, 0x01};
+const uint8_t token_serial[7] = {0x80,0x24,0x08, 0x25, 0x04 ,0x10, 0x02};
+//const uint8_t token_serial[7] = {0x56,0x24,0x08, 0x24, 0x18 ,0x10, 0x01};
 
 #define SW_VERSION  "YKC1.8.1"
 
@@ -366,7 +366,7 @@ typedef struct{
     uint8_t charger_serial[CHARGER_SERIAL_LENGTH];//桩编号
     uint8_t gun_index;//枪编号
     uint8_t phy_cardid[8];//物理卡号
-    uint32_t remain_money;//修复后的余额
+    uint8_t remain_money[4];//修复后的余额
 }__attribute__ ((packed)) PACK_DATA_0X42;
 
 typedef struct{

@@ -105,6 +105,57 @@ size_t addPKCS7Padding(const unsigned char *input, size_t inputLength, unsigned 
     return paddedLength;
 }
 
+
+String aesEncrypt(const char *message, uint16_t mess_len, unsigned char *output, size_t &outputLength) {
+    mbedtls_aes_context aes;
+    unsigned char iv[16] = {0}; // Initialization vector (can be random or fixed)
+    memcpy(iv, FIXED_RANDOM_KEY, 16); // 示例使用固定 IV，实际应使用随机 IV
+
+    // 初始化 AES 上下文
+    mbedtls_aes_init(&aes);
+    mbedtls_aes_setkey_enc(&aes, (const unsigned char *)FIXED_RANDOM_KEY, 128);
+
+    // 计算填充后的长度，预留空间以防需要额外的填充块
+    size_t paddedLength = ((mess_len + 15) / 16) * 16 + 16;
+    unsigned char *paddedMessage = (unsigned char *)malloc(paddedLength);
+    if (paddedMessage == NULL) {
+        Serial.println("Memory allocation failed");
+        mbedtls_aes_free(&aes);
+        return "";
+    }
+
+    // 添加 PKCS7 填充
+    size_t actualPaddedLength = addPKCS7Padding((const unsigned char *)message, mess_len, paddedMessage, 16);
+
+    // 确保填充后的长度不超过分配的长度
+    if (actualPaddedLength > paddedLength) {
+        Serial.println("Padding length exceeded allocated length");
+        free(paddedMessage);
+        mbedtls_aes_free(&aes);
+        return "";
+    }
+
+    // 执行加密
+    int ret = mbedtls_aes_crypt_cbc(&aes, MBEDTLS_AES_ENCRYPT, actualPaddedLength, iv, paddedMessage, output);
+    
+    if (ret != 0) {
+        Serial.print("Failed to AES encrypt, error code: ");
+        Serial.println(ret);
+        free(paddedMessage);
+        mbedtls_aes_free(&aes);
+        return "";
+    }
+
+    // 释放内存
+    free(paddedMessage);
+    mbedtls_aes_free(&aes);
+
+    outputLength = actualPaddedLength;
+
+    return "";
+}
+#if 0
+
 String aesEncrypt(const char *message, uint16_t mess_len, unsigned char *output, size_t &outputLength) {
     mbedtls_aes_context aes;
     unsigned char iv[16] = {0}; // Initialization vector (can be random or fixed)
@@ -142,36 +193,6 @@ String aesEncrypt(const char *message, uint16_t mess_len, unsigned char *output,
     // 打印AES加密后的16进制表示
     //Serial.println("AES Encrypted Message (HEX):");
     //printHex(output, outputLength);
-
-    return "";
-}
-#if 0
-String aesEncrypt(const char *message,uint16_t mess_len, unsigned char *output, size_t &outputLength) {
-    mbedtls_aes_context aes;
-    unsigned char iv[16] = {0}; // Initialization vector (can be random or fixed)
-    memcpy(iv, FIXED_RANDOM_KEY, 16);
-    mbedtls_aes_init(&aes);
-    mbedtls_aes_setkey_enc(&aes, FIXED_RANDOM_KEY, 128);
-
-    // 计算需要的填充长度
-    
-    size_t paddedLength = ((mess_len + 15) / 16) * 16; // 计算填充后的长度
-    outputLength = paddedLength;
-
-    // 执行加密
-    int ret = mbedtls_aes_crypt_cbc(&aes, MBEDTLS_AES_ENCRYPT, paddedLength, iv, (const unsigned char *)message, output);
-
-    mbedtls_aes_free(&aes);
-
-    if (ret != 0) {
-        Serial.print("Failed to AES encrypt, error code: ");
-        Serial.println(ret);
-        return "";
-    }
-
-    // 打印AES加密后的16进制表示
-    Serial.println("AES Encrypted Message (HEX):");
-     printHex(output, outputLength);
 
     return "";
 }

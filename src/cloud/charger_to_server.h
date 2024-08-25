@@ -32,7 +32,7 @@ extern void charger_to_server_0X35(uint8_t gun_index,uint8_t err_code,uint8_t re
 extern void charger_to_server_0x3B(uint8_t gun_index,uint32_t card_id,uint8_t trade_flag,uint8_t stop_reason);   //3B改为3D
 
 //余额更新应答
-extern void charger_to_server_0X41(uint32_t card_id,uint8_t result);
+ void charger_to_server_0X41(uint8_t * card_id, uint8_t result) ;
 
 //对时设置应答
 extern void charger_to_server_0X55(uint32_t time);

@@ -45,7 +45,7 @@ uint8_t getFeeIndexAtTime(time_t timestamp) {
 uint8_t getFeeIndexAtTime(time_t timestamp) {
     
     struct tm* localTime = localtime(&timestamp);
-    Serial.printf("localTime->tm_hour:%d,localTime->tm_min:%d,localTime->tm_sec:%d\n",localTime->tm_hour ,localTime->tm_min,localTime->tm_sec);
+    //Serial.printf("localTime->tm_hour:%d,localTime->tm_min:%d,localTime->tm_sec:%d\n",localTime->tm_hour ,localTime->tm_min,localTime->tm_sec);
     // 计算从午夜开始的总秒数
     int secondsSinceMidnight = localTime->tm_hour * 3600 + localTime->tm_min * 60 + localTime->tm_sec;
     
@@ -139,7 +139,7 @@ float calculateChargeCostFor15sInterval( float power, time_t startTime, time_t e
     uint8_t startFeeIndex = getFeeIndexAtTime(startTime);
     uint8_t endFeeIndex = getFeeIndexAtTime(endTime);
     uint8_t index = 0;
-    Serial.printf("startFeeIndex=%d,endFeeIndex=%d\n",startFeeIndex,endFeeIndex);
+   // Serial.printf("startFeeIndex=%d,endFeeIndex=%d\n",startFeeIndex,endFeeIndex);
     float periodCost =0;
     if (startFeeIndex == endFeeIndex) {
         index = startFeeIndex;
@@ -394,8 +394,8 @@ void reset_gun_status(Gun_status* gun_status){
     
     memset(gun_status->feePower, 0, sizeof(gun_status->feePower));
     memset(gun_status->feeCosts, 0, sizeof(gun_status->feeCosts));
-    memset(gun_status->feeCosts, 0, sizeof(gun_status->feeTimes));
-    memset(gun_status->feeCosts, 0, sizeof(gun_status->duanFee));
+    memset(gun_status->feeTimes, 0, sizeof(gun_status->feeTimes));
+    memset(gun_status->duanFee, 0, sizeof(gun_status->duanFee));
     gun_status->start_time = 0;
     gun_status->start_charge_energy = 0;
 }
