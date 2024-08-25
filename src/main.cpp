@@ -512,6 +512,14 @@ void stateMachineTask(void *pvParameters) {
                 }
                 break;
         }
+
+        if(loginSuccess)
+        {
+            resend_bill_proc();
+            //账单数据
+            processStopReason();
+        }
+
         int insert_status = checkGPIOStateChange(IO_GUN_INSERT_INIT);
         if (loginSuccess && insert_status != 0) {
             // 打印状态变化信息
@@ -552,12 +560,7 @@ void stateMachineTask(void *pvParameters) {
             initialSendDone = true;  // 标记初始发送已经完成
             lastChargingEndSendMillis = millis();  // 更新最后发送时间
         }
-        if(loginSuccess)
-        {
-            resend_bill_proc();
-            //账单数据
-            processStopReason();
-        }
+        
         
         vTaskDelay(pdMS_TO_TICKS(100)); 
     }
