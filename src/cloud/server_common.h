@@ -113,6 +113,8 @@ const uint8_t token_serial[7] = {0x80,0x24,0x08, 0x25, 0x04 ,0x10, 0x02};
 
 typedef enum {
     STOP_REASON_APP =0x40,
+    STOP_REASON_FULL = 0x41,
+    STOP_REASON_MANUAL = 0x45,
     STOP_REASON_INSUFFICIENT_BALANCE=0x6E,
      STOP_REASON_EMERGENCY_STOP=0x72,
     STOP_REASON_OTHER // 其他原因可以添加在这里

@@ -135,6 +135,8 @@ float calculateChargeCostForPeriod(float power,   FEE_MODEL& feeModel, uint8_t f
 
 float calculateChargeCostFor15sInterval( float power, time_t startTime, time_t endTime) {
     static float totalCost = 0.0;
+    static uint8_t zeroPowerCount = 0; 
+    static float previousPower = -1.0;
     FEE_MODEL* feeModel = &(All_status[0].fee_model);
     uint8_t startFeeIndex = getFeeIndexAtTime(startTime);
     uint8_t endFeeIndex = getFeeIndexAtTime(endTime);
@@ -174,6 +176,23 @@ float calculateChargeCostFor15sInterval( float power, time_t startTime, time_t e
         totalCost = 0;
         sendFailureReasonToQueue(STOP_REASON_INSUFFICIENT_BALANCE);
     }
+    //连续三次功率为0
+    if (power == 0) {
+        if (previousPower == 0) {
+            zeroPowerCount++;
+        } else {
+            zeroPowerCount = 1; 
+        }
+    } else {
+        zeroPowerCount = 0; 
+    }
+    if (zeroPowerCount >= 3) {
+        sendFailureReasonToQueue(STOP_REASON_FULL);
+        zeroPowerCount = 0; 
+    }
+
+    previousPower = power; // 更新上一个 power 值
+
     return totalCost;
 }
 

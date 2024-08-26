@@ -394,6 +394,14 @@ void processStopReason() {
                 setStatus(All_status[0x00],0x02);
                 charger_to_server_0x3D(0x01, 0, 0x01, STOP_REASON_APP);
                 break;
+            case STOP_REASON_FULL:
+                setStatus(All_status[0x00],0x02);
+                charger_to_server_0x3D(0x01, 0, 0x01, STOP_REASON_FULL);
+                break;
+            case STOP_REASON_MANUAL:
+                setStatus(All_status[0x00],0x02);
+                charger_to_server_0x3D(0x01, 0, 0x01, STOP_REASON_MANUAL);
+                break;
             case STOP_REASON_OTHER:
                 // 处理其他停止原因
                 break;
@@ -573,26 +581,47 @@ void stateMachineTask(void *pvParameters) {
     }
 }
 
+
+//启用模拟充满 0为启用  1为不启用
+#define ENABLE_CURRENT_DECREASE 0
+
+
 void simulateChargeTask(void* pvParameters) {
     Gun_status* status = (Gun_status*) pvParameters;
     uint32_t last_time =0;
     float voltage = 220;  // 电压从220V开始
     float current = 5;    // 电流从5A开始
-
+    uint16_t elapsed_time = 0;
     float mycharge_energy=0;
-
     while (true) {
         // 随机波动电压在380V附近
         voltage = 220 + (rand() % 5);
 
-        // 电流逐渐增加，直到接近40A
-        if (current < 80) {
-            current += rand() % 10;  // 每次增加0到2A
-        } else {
-            // 当电流达到100A后，在20A附近波动
-            current =79 + (rand() % 3);  
-        }
-
+        #if ENABLE_CURRENT_DECREASE
+            // 电流逐渐增加，直到接近40A
+            if (current < 80) {
+                current += rand() % 10;  // 每次增加0到2A
+            } else {
+                // 当电流达到100A后，在20A附近波动
+                current =79 + (rand() % 3);  
+            }
+        #else
+            
+            if (elapsed_time < 25) {  
+                if (current < 80) {
+                    current += rand() % 10;  
+                } else {
+                    current = 79 + (rand() % 3);  
+                }
+            } else  {
+                if (current > 0) {
+                    current -= rand() % 5;  
+                    if (current < 0) {
+                        current = 0;
+                    }
+                }
+            }
+        #endif
         // 设置电压和电流
         setOutVoltage(*status, voltage);
         setOutCurrent(*status, current);
@@ -600,13 +629,10 @@ void simulateChargeTask(void* pvParameters) {
         float power = ((float)(voltage * current))/1000;      //修改计算
         float energyConsumed = power * 15 / 3600;    
 
-        // 更新电量消耗
-        // mycharge_energy += energyConsumed;  
-        //Serial.printf("Voltage: %fV, Current: %fA, Power: %f kW,Energy Consumed: %f kWh,Total Energy Consumed %f kWh\n", voltage, current, power,energyConsumed,mycharge_energy); 
-
         // 调用计算费用的函数
         if(getStatus(*status) ==3)
         {
+            elapsed_time++;
             calculateChargeCostFor15sInterval(energyConsumed,last_time,time(NULL));   
 
             // 更新电量消耗
@@ -618,9 +644,13 @@ void simulateChargeTask(void* pvParameters) {
             // 打印电压、电流和消耗电量
             // Serial.printf("Voltage: %dV, Current: %dA, Energy Consumed: %f kWh  Total Energy Consumed %f kWh\n", voltage, current, energyConsumed,mycharge_energy);
             Serial.printf("Voltage: %fV, Current: %fA, Power: %f kW,Energy Consumed: %f kWh,Total Energy Consumed %f kWh\n", voltage, current, power,energyConsumed,mycharge_energy); 
-
+            last_time = time(NULL);    
         }
-        last_time = time(NULL);        
+        else
+        {
+            elapsed_time=0;
+        }
+            
 
         // 每15秒运行一次
         vTaskDelay(pdMS_TO_TICKS(15000));
@@ -633,6 +663,9 @@ void handleButtonPress() {
     Serial.println(pressedButton);
     if (pressedButton == 0) {
         sendFailureReasonToQueue(STOP_REASON_EMERGENCY_STOP);
+    }else if(pressedButton==1)
+    {
+        sendFailureReasonToQueue(STOP_REASON_MANUAL);
     }
   }
 }
